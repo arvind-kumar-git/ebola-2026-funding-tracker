@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ebola 2026 Funding Tracker</title>
+<meta name="description" content="Pledged versus released: a sourced ledger of funding announced for the 2026 Bundibugyo Ebola outbreak in DR Congo, and the evidence on how much has actually been disbursed.">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #fdfdfb;
+    --surface: #ffffff;
+    --ink: #1c1c1a;
+    --ink-2: #52514e;
+    --muted: #6b6a66;
+    --accent: #2a5db0;
+    --rule: #e4e2dc;
+    --grid: #ece9e2;
+    --series-1: #2a78d6;
+    --series-1-track: #cde2fb;
+    --series-2: #eb6834;
+    --warn-ink: #8a4b00;
+    --warn-bg: #fff4e5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #16181c;
+      --surface: #1c1f24;
+      --ink: #e8e6e1;
+      --ink-2: #c3c2b7;
+      --muted: #9a9891;
+      --accent: #7aa5e8;
+      --rule: #2c2f35;
+      --grid: #262a31;
+      --series-1: #3987e5;
+      --series-1-track: #1c3a63;
+      --series-2: #d95926;
+      --warn-ink: #f0c080;
+      --warn-bg: #2a2117;
+    }
+  }
+  :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #16181c;
+      --surface: #1c1f24;
+      --ink: #e8e6e1;
+      --ink-2: #c3c2b7;
+      --muted: #9a9891;
+      --accent: #7aa5e8;
+      --rule: #2c2f35;
+      --grid: #262a31;
+      --series-1: #3987e5;
+      --series-1-track: #1c3a63;
+      --series-2: #d95926;
+      --warn-ink: #f0c080;
+      --warn-bg: #2a2117;
+      }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding: 6vh 16px 8vh;
+  }
+  main { max-width: 68rem; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .crumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+  h1 { font-size: 1.9rem; font-weight: 650; letter-spacing: -0.015em; line-height: 1.2; margin-bottom: 0.5rem; }
+  .tagline { color: var(--muted); max-width: 46rem; margin-bottom: 0.5rem; }
+  .asof { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.8rem; }
+  h2 {
+    font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--muted); margin: 2.6rem 0 0.8rem; padding-top: 1.4rem; border-top: 1px solid var(--rule);
+  }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 1.2rem 0 0.4rem; }
+  p { margin-bottom: 0.8rem; max-width: 46rem; }
+  .lede { font-size: 1.05rem; }
+  ul.plain { list-style: none; }
+  ul.notes { padding-left: 1.2rem; max-width: 46rem; }
+  ul.notes li { margin-bottom: 0.5rem; }
+  .callout { background: var(--warn-bg); color: var(--warn-ink); border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; max-width: 46rem; font-size: 0.95rem; }
+  .callout strong { font-weight: 650; }
+
+  /* hero + KPI row */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr); gap: 1.2rem; align-items: stretch; margin-top: 1.2rem; }
+  .hero-fig { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 1.2rem 1.3rem; }
+  .hero-fig .label { font-size: 0.85rem; color: var(--muted); }
+  .hero-fig .value { font-size: 3.4rem; font-weight: 650; line-height: 1.05; letter-spacing: -0.02em; margin: 0.2rem 0 0.3rem; }
+  .hero-fig .sub { font-size: 0.9rem; color: var(--ink-2); }
+  .kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+  .tile { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 0.85rem 1rem; }
+  .tile .label { font-size: 0.8rem; color: var(--muted); }
+  .tile .value { font-size: 1.55rem; font-weight: 650; line-height: 1.2; margin: 0.15rem 0; }
+  .tile .sub { font-size: 0.8rem; color: var(--ink-2); }
+  @media (max-width: 720px) { .hero { grid-template-columns: 1fr; } .kpis { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 440px) { .kpis { grid-template-columns: 1fr; } }
+
+  /* charts */
+  .chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 1rem 1.1rem 0.8rem; margin: 0.8rem 0 0.6rem; position: relative; }
+  .chart-title { font-weight: 600; margin-bottom: 0.15rem; }
+  .chart-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; }
+  .legend { display: flex; gap: 1.1rem; flex-wrap: wrap; font-size: 0.82rem; color: var(--ink-2); margin-bottom: 0.4rem; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .legend .s1::before { background: var(--series-1); }
+  .legend .s2::before { background: var(--series-2); }
+  .chart-body { overflow-x: auto; overflow-y: hidden; }
+  .chart-body svg { min-width: 640px; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  svg text { font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; fill: var(--ink-2); }
+  svg text.val { fill: var(--ink); font-variant-numeric: tabular-nums; }
+  svg text.nofig { fill: var(--muted); font-style: italic; }
+  svg .grid line { stroke: var(--grid); stroke-width: 1; }
+  svg .axis line { stroke: var(--rule); stroke-width: 1; }
+  svg rect.bar.s1 { fill: var(--series-1); }
+  svg rect.bar.s2 { fill: var(--series-2); }
+  svg rect.hit { fill: transparent; cursor: default; }
+  svg rect.hit:hover + rect.bar, svg rect.hit:focus + rect.bar { opacity: 0.8; }
+  .tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 0.8rem; line-height: 1.35; padding: 0.45rem 0.6rem; border-radius: 6px; max-width: 18rem; opacity: 0; transition: opacity 0.08s; z-index: 5; }
+  .tip b { font-weight: 650; }
+  .chart-foot { font-size: 0.8rem; color: var(--muted); margin-top: 0.4rem; }
+
+  /* controls */
+  .controls { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin: 0.6rem 0 0.8rem; font-size: 0.9rem; }
+  .controls label { color: var(--muted); }
+  .controls select, .controls input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.3rem 0.5rem; }
+  .controls input { min-width: 12rem; }
+  .count { color: var(--muted); font-size: 0.85rem; }
+
+  /* tables */
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+  #tbl-ledger { min-width: 1080px; }
+  #tbl-appeals { min-width: 820px; }
+  th, td { text-align: left; vertical-align: top; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); }
+  th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; white-space: nowrap; position: sticky; top: 0; background: var(--surface); cursor: pointer; }
+  th.sorted::after { content: " \25BE"; }
+  th.sorted.asc::after { content: " \25B4"; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  th.num { text-align: right; }
+  td .sec { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 0.15rem; }
+  td details { font-size: 0.8rem; color: var(--ink-2); margin-top: 0.2rem; }
+  td details summary { cursor: pointer; color: var(--accent); }
+  .pill { display: inline-block; font-size: 0.72rem; padding: 0.05rem 0.45rem; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); white-space: nowrap; }
+  .pill.y { border-color: var(--series-1); color: var(--series-1); }
+  .pill.lo { border-color: var(--series-2); color: var(--series-2); }
+  .meter { position: relative; height: 8px; border-radius: 4px; background: var(--series-1-track); min-width: 7rem; margin-top: 0.3rem; }
+  .meter > span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--series-1); }
+  .evid { list-style: none; max-width: 52rem; }
+  .evid li { display: grid; grid-template-columns: 6.2rem 1fr; gap: 0.8rem; padding: 0.6rem 0; border-bottom: 1px solid var(--rule); font-size: 0.92rem; }
+  .evid li:last-child { border-bottom: 0; }
+  .evid .d { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .evid .who { font-weight: 600; }
+  .evid .fig { color: var(--series-2); font-weight: 600; }
+  .evid .src { font-size: 0.82rem; }
+  @media (max-width: 520px) { .evid li { grid-template-columns: 1fr; gap: 0.1rem; } }
+  footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: 0.85rem; color: var(--muted); }
+  .sr { position: absolute; left: -9999px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumb">Ebola 2026 funding tracker &middot; <a href="https://github.com/arvind-kumar-git/ebola-2026-funding-tracker">data and source on GitHub</a> &middot; by <a href="https://arvind-kumar-git.github.io/">Arvind Kumar</a></p>
+  <h1>Ebola 2026: pledged versus released</h1>
+  <p class="tagline">A sourced ledger of money announced for the Bundibugyo Ebola outbreak in eastern DR Congo, set against the evidence on how much has actually reached the response.</p>
+  <p class="asof">Data as of <span id="built">__BUILT__</span>. Every row links to its source. Amounts in US dollars, millions. <a href="#method">Method and caveats</a> &middot; <a href="#contribute">Corrections welcome</a></p>
+
+  <div class="callout"><strong>What this page can and cannot show.</strong> Pledges are well documented. Disbursement is not. The last official figure for the share of pledges released dates from June 25, and no donor or agency has published a later one. Everything on the released side below is partial evidence, not an audit.</div>
+
+  <div class="hero">
+    <div class="hero-fig">
+      <div class="label">Last official share of pledges released</div>
+      <div class="value" id="hero-val">13%</div>
+      <div class="sub">of about $910m pledged, Africa CDC, June 25. The Independent Panel put it under 10% the same week. No later official figure exists.</div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+
+  <h2 id="gap">The gap over time</h2>
+  <p>Each row is a dated snapshot. Pledge totals come from Africa CDC unless noted. Released amounts are the only figures anyone has published for money that reached countries or partners.</p>
+  <div class="chart" id="chart-timeline"></div>
+
+  <h2 id="donors">Who has pledged what</h2>
+  <p>Announcements grouped by donor, counting only rows this tracker treats as new, non-overlapping money. Restated totals, pass-through allocations, in-kind goods and unenacted requests are excluded. The full logic is in the ledger below.</p>
+  <div class="chart" id="chart-donors"></div>
+
+  <h2 id="appeals">Appeals and plans: required versus received</h2>
+  <p>Agency appeals are the one place where received money is routinely published. They cover only a slice of the response.</p>
+  <div class="tbl-wrap"><table id="tbl-appeals"></table></div>
+
+  <h2 id="evidence">Evidence on money released</h2>
+  <p>Every statement found about disbursement, unpaid workers, or accounting for funds, in date order.</p>
+  <ul class="evid" id="evid"></ul>
+
+  <h2 id="ledger">Pledge ledger</h2>
+  <p>One row per announcement. "Counted" marks rows summed in the headline figure. Open a row's notes for overlap reasoning and disbursement evidence.</p>
+  <div class="controls">
+    <label>Type <select id="f-type"><option value="">All</option></select></label>
+    <label>Counted <select id="f-counted"><option value="">All</option><option value="Y">Counted</option><option value="N">Not counted</option></select></label>
+    <label>Confidence <select id="f-conf"><option value="">All</option></select></label>
+    <input id="f-q" type="search" placeholder="Search donor, recipient, notes">
+    <span class="count" id="ledger-count"></span>
+  </div>
+  <div class="tbl-wrap"><table id="tbl-ledger"></table></div>
+
+  <h2 id="method">Method and caveats</h2>
+  <ul class="notes">
+    <li><strong>Sources.</strong> Donor press releases, Africa CDC, WHO, OCHA, UN agency appeal pages, the Congressional Research Service, and news reporting. Compiled on October 12, 2026 from search-engine extracts of those pages. The pages themselves could not be opened from the build environment, so wording may be paraphrased. Verify a figure against its link before quoting it.</li>
+    <li><strong>What "counted" means.</strong> A row is counted when it is new money, specific enough to date, and not a restatement of an earlier row. Cumulative totals, allocations by pooled funds (CERF, CEPI, WHO's contingency fund) that pass donor money through, in-kind goods, and the unenacted US supplemental request are excluded. Where a donor only published a cumulative figure, a derived row reconciles the difference and is marked as such.</li>
+    <li><strong>Why the headline sum is below Africa CDC's $2.997bn.</strong> Africa CDC's count includes items this tracker could not itemise, chiefly a reported EU figure above $568m and World Bank and German totals well above their published announcements. The US State Department's own count, above $2bn, sits between the two. None of the three reconcile, and the gap is itself a finding.</li>
+    <li><strong>Currency.</strong> Where a source gave dollars, that figure is used. Otherwise converted at approximate mid-2026 rates: EUR 1.15, GBP 1.33, CHF 1.24, CAD 0.73, NOK 0.098, SEK 0.105, DKK 0.154. Treat converted rows as plus or minus five percent.</li>
+    <li><strong>Pledge, commitment, disbursement.</strong> Donors use these words loosely. "Working with Congress, intends to provide" is recorded as a pledge. "Allocated" and "approved" are recorded as commitments. Only wording like "released", "received" or "disbursed" is recorded as disbursed.</li>
+    <li><strong>Known gaps.</strong> OCHA's Financial Tracking Service and the WHO appeal funding table were not retrievable. The EU's cumulative figure, Canada's reported C$80m, a US Kenya pledge, and the Oct 2 figure of $227m mobilised for the first plan each rest on a single source. No audit of 2026 Ebola funds was found.</li>
+  </ul>
+
+  <h2 id="contribute">Corrections and additions</h2>
+  <p>The data lives in four CSV files alongside this page: <code>pledges.csv</code>, <code>appeals.csv</code>, <code>disbursement_evidence.csv</code> and <code>timeline.csv</code>. To add or correct a row, edit the CSV, run <code>build.py</code>, and open a pull request at <a href="https://github.com/arvind-kumar-git/ebola-2026-funding-tracker">github.com/arvind-kumar-git/ebola-2026-funding-tracker</a>. A row needs a date, an amount, a type, and a link. If you work for a donor or agency and can supply a disbursed figure, that is the single most useful contribution.</p>
+
+  <footer>Ebola 2026 funding tracker. Not affiliated with any donor, agency or response organisation. Built <span id="built2">__BUILT__</span>.</footer>
+</main>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const fmtM = v => v == null ? '' : (v >= 1000 ? '$' + (v / 1000).toFixed(3).replace(/\.?0+$/, '') + 'bn' : '$' + (v % 1 === 0 ? v.toFixed(0) : v.toFixed(v < 10 ? 2 : 1).replace(/\.?0+$/, '')) + 'm');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return 'source'; } };
+  const donorGroup = d => { let g = d.split(' (')[0].trim(); if (g.startsWith('World Bank')) g = 'World Bank'; if (g.startsWith('United States')) g = 'United States'; return g; };
+
+  /* ---------- KPIs ---------- */
+  const tl = D.timeline.slice().sort((a, b) => a.date < b.date ? -1 : 1);
+  const kpis = [
+    { label: 'Itemised announcements, this tracker', value: fmtM(D.counted_total_m), sub: D.n_counted + ' counted rows of ' + D.n_pledges + '; see ledger' },
+    { label: 'Commitments counted by Africa CDC', value: '$2.997bn', sub: 'Sep 24; "pledges, not money already disbursed"' },
+    { label: 'Pledges counted by the US State Dept', value: '>$2bn', sub: 'Sep 30, G20 chair\'s statement; same event' },
+    { label: 'Current national plan ask', value: '$1.3bn', sub: '180-day plan, Sep 4; a $1.2bn plan followed Oct 2' },
+  ];
+  document.getElementById('kpis').innerHTML = kpis.map(k => `<div class="tile"><div class="label">${esc(k.label)}</div><div class="value">${esc(k.value)}</div><div class="sub">${esc(k.sub)}</div></div>`).join('');
+
+  /* ---------- tooltip ---------- */
+  function tipFor(container) {
+    const t = document.createElement('div'); t.className = 'tip'; container.appendChild(t);
+    return {
+      show(html, ev) { t.innerHTML = html; t.style.opacity = 1; this.move(ev); },
+      move(ev) { const r = container.getBoundingClientRect(); let x = ev.clientX - r.left + 14, y = ev.clientY - r.top + 14; if (x + t.offsetWidth > r.width - 8) x = ev.clientX - r.left - t.offsetWidth - 14; t.style.left = x + 'px'; t.style.top = y + 'px'; },
+      hide() { t.style.opacity = 0; }
+    };
+  }
+  function attachTips(svg, tip) {
+    svg.querySelectorAll('rect.hit').forEach(h => {
+      const html = h.getAttribute('data-tip');
+      h.addEventListener('mousemove', ev => tip.show(html, ev));
+      h.addEventListener('mouseleave', () => tip.hide());
+      h.addEventListener('focus', ev => { const b = h.getBoundingClientRect(); tip.show(html, { clientX: b.left + b.width / 2, clientY: b.top }); });
+      h.addEventListener('blur', () => tip.hide());
+    });
+  }
+
+  /* ---------- timeline chart: grouped horizontal bars ---------- */
+  (function () {
+    const el = document.getElementById('chart-timeline');
+    const rows = tl;
+    const W = 860, labW = 150, rightPad = 90, rowH = 44, barH = 14, gap = 2, top = 28, bottom = 26;
+    const H = top + rows.length * rowH + bottom;
+    const plotW = W - labW - rightPad;
+    const max = Math.max(...rows.map(r => r.pledged_usd_m || 0));
+    const x = v => labW + (v / max) * plotW;
+    const ticks = [0, 500, 1000, 1500, 2000, 2500, 3000].filter(t => t <= max * 1.02);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="tl-title"><title id="tl-title">Pledged totals versus released amounts by snapshot date</title>`;
+    s += '<g class="grid">' + ticks.map(t => `<line x1="${x(t)}" y1="${top - 6}" x2="${x(t)}" y2="${H - bottom}"/>`).join('') + '</g>';
+    s += ticks.map(t => `<text x="${x(t)}" y="${H - 8}" text-anchor="middle">${t === 0 ? '0' : fmtM(t)}</text>`).join('');
+    rows.forEach((r, i) => {
+      const y0 = top + i * rowH;
+      const d = new Date(r.date + 'T00:00:00');
+      const lab = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      s += `<text x="${labW - 10}" y="${y0 + barH + 2}" text-anchor="end">${esc(lab)}</text>`;
+      s += `<text x="${labW - 10}" y="${y0 + barH + 16}" text-anchor="end" style="fill:var(--muted);font-size:10.5px">${esc(r.reported_by.length > 22 ? r.reported_by.slice(0, 21) + '…' : r.reported_by)}</text>`;
+      // pledged
+      const pw = Math.max(x(r.pledged_usd_m) - labW, 0);
+      const tip1 = `<b>Pledged: ${fmtM(r.pledged_usd_m)}</b><br>${esc(r.reported_by)}, ${esc(lab)}<br>${esc(r.basis)}`;
+      s += `<rect class="hit" x="${labW}" y="${y0 - 2}" width="${plotW + rightPad}" height="${barH + 4}" tabindex="0" data-tip="${esc(tip1)}"/>`;
+      s += `<rect class="bar s1" x="${labW}" y="${y0}" width="${pw}" height="${barH}" rx="0" ry="0"/>`;
+      s += `<text class="val" x="${labW + pw + 6}" y="${y0 + barH - 2}">${fmtM(r.pledged_usd_m)}</text>`;
+      // released
+      const y1 = y0 + barH + gap;
+      if (r.released_usd_m != null) {
+        const rw = Math.max(x(r.released_usd_m) - labW, 2);
+        const tip2 = `<b>Released: ${fmtM(r.released_usd_m)}</b><br>${esc(r.reported_by)}, ${esc(lab)}<br>${esc(r.basis)}`;
+        s += `<rect class="hit" x="${labW}" y="${y1 - 2}" width="${plotW + rightPad}" height="${barH + 4}" tabindex="0" data-tip="${esc(tip2)}"/>`;
+        s += `<rect class="bar s2" x="${labW}" y="${y1}" width="${rw}" height="${barH}"/>`;
+        s += `<text class="val" x="${labW + rw + 6}" y="${y1 + barH - 2}">${fmtM(r.released_usd_m)} (${Math.round(100 * r.released_usd_m / r.pledged_usd_m)}%)</text>`;
+      } else {
+        s += `<text class="nofig" x="${labW + 4}" y="${y1 + barH - 2}">no released figure published</text>`;
+      }
+    });
+    s += `<g class="axis"><line x1="${labW}" y1="${top - 6}" x2="${labW}" y2="${H - bottom}"/></g></svg>`;
+    el.innerHTML = `<div class="chart-title">Pledged totals and what was reported released</div><div class="chart-sub">Each snapshot is a separate statement; totals are not strictly comparable across reporters.</div><div class="legend"><span class="s1">Pledged or committed</span><span class="s2">Reported released</span></div><div class="chart-body">` + s + `</div><div class="chart-foot">Hover or tab to a bar for the source statement. Links are in the <a href="#evidence">evidence list</a>.</div>`;
+    attachTips(el.querySelector('svg'), tipFor(el));
+  })();
+
+  /* ---------- donor chart ---------- */
+  (function () {
+    const el = document.getElementById('chart-donors');
+    const agg = {};
+    D.pledges.filter(r => r.counts_in_total === 'Y' && r.amount_usd_m).forEach(r => {
+      const g = donorGroup(r.donor); agg[g] = agg[g] || { name: g, total: 0, n: 0, type: r.donor_type }; agg[g].total += r.amount_usd_m; agg[g].n++;
+    });
+    let list = Object.values(agg).sort((a, b) => b.total - a.total);
+    const TOP = 14;
+    if (list.length > TOP) { const rest = list.slice(TOP); list = list.slice(0, TOP); list.push({ name: 'Other (' + rest.length + ' donors)', total: rest.reduce((s, r) => s + r.total, 0), n: rest.reduce((s, r) => s + r.n, 0), type: '', other: rest.map(r => r.name + ' ' + fmtM(r.total)).join('; ') }); }
+    const W = 860, labW = 190, rightPad = 80, rowH = 26, barH = 14, top = 14, bottom = 26;
+    const H = top + list.length * rowH + bottom;
+    const plotW = W - labW - rightPad;
+    const max = Math.max(...list.map(r => r.total));
+    const x = v => labW + (v / max) * plotW;
+    const step = max > 600 ? 200 : 100;
+    const ticks = []; for (let t = 0; t <= max; t += step) ticks.push(t);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="dn-title"><title id="dn-title">Counted announcements by donor</title>`;
+    s += '<g class="grid">' + ticks.map(t => `<line x1="${x(t)}" y1="${top - 4}" x2="${x(t)}" y2="${H - bottom}"/>`).join('') + '</g>';
+    s += ticks.map(t => `<text x="${x(t)}" y="${H - 8}" text-anchor="middle">${t === 0 ? '0' : fmtM(t)}</text>`).join('');
+    list.forEach((r, i) => {
+      const y0 = top + i * rowH + (rowH - barH) / 2;
+      const w = Math.max(x(r.total) - labW, 1);
+      const tip = `<b>${esc(r.name)}: ${fmtM(r.total)}</b><br>${r.n} counted row${r.n > 1 ? 's' : ''}${r.other ? '<br>' + esc(r.other) : ''}`;
+      s += `<text x="${labW - 10}" y="${y0 + barH - 2}" text-anchor="end">${esc(r.name.length > 30 ? r.name.slice(0, 29) + '…' : r.name)}</text>`;
+      s += `<rect class="hit" x="${labW}" y="${y0 - 5}" width="${plotW + rightPad}" height="${barH + 10}" tabindex="0" data-tip="${esc(tip)}"/>`;
+      s += `<rect class="bar s1" x="${labW}" y="${y0}" width="${w}" height="${barH}"/>`;
+      s += `<text class="val" x="${labW + w + 6}" y="${y0 + barH - 2}">${fmtM(r.total)}</text>`;
+    });
+    s += `<g class="axis"><line x1="${labW}" y1="${top - 4}" x2="${labW}" y2="${H - bottom}"/></g></svg>`;
+    el.innerHTML = `<div class="chart-title">Counted announcements by donor</div><div class="chart-sub">Sum of counted ledger rows, grouped by donor. Multilateral banks and funds count their own commitments; pooled funds that pass donor money through do not.</div><div class="chart-body">` + s + `</div><div class="chart-foot">Total of counted rows: ${fmtM(D.counted_total_m)}. The United States figure matches the State Department's "more than $780m" plus the CDC's $107m drawdown; reconciliation rows are marked in the ledger.</div>`;
+    attachTips(el.querySelector('svg'), tipFor(el));
+  })();
+
+  /* ---------- appeals table ---------- */
+  (function () {
+    const t = document.getElementById('tbl-appeals');
+    let h = '<thead><tr><th>Plan or appeal</th><th>Owner</th><th>Period</th><th class="num">Required</th><th class="num">Received</th><th>Coverage</th><th>As of</th></tr></thead><tbody>';
+    D.appeals.forEach(a => {
+      const cov = a.coverage_pct != null ? Math.min(a.coverage_pct, 100) : null;
+      h += `<tr><td><a href="${esc(a.source_url)}" rel="noopener">${esc(a.plan)}</a><span class="sec">${esc(a.requirement_note)}${a.requirement_note && a.notes ? '. ' : ''}${esc(a.notes)}</span></td><td>${esc(a.owner)}</td><td>${esc(a.period)}</td><td class="num">${a.requirement_usd_m != null ? fmtM(a.requirement_usd_m) : '<span class="pill">not stated</span>'}</td><td class="num">${a.received_usd_m != null ? fmtM(a.received_usd_m) : '<span class="pill lo">not published</span>'}</td><td>${cov != null ? `${a.coverage_pct}%<div class="meter" role="img" aria-label="${a.coverage_pct}% funded"><span style="width:${cov}%"></span></div>` : '<span class="pill lo">unknown</span>'}</td><td>${esc(a.as_of)}</td></tr>`;
+    });
+    t.innerHTML = h + '</tbody>';
+  })();
+
+  /* ---------- evidence list ---------- */
+  (function () {
+    const ul = document.getElementById('evid');
+    ul.innerHTML = D.evidence.slice().sort((a, b) => a.date < b.date ? -1 : 1).map(e => `<li><span class="d">${esc(e.date)}</span><span><span class="who">${esc(e.who)}.</span> ${esc(e.what_was_said)} ${e.figure && e.figure !== 'n/a' ? `<span class="fig">${esc(e.figure)}.</span>` : ''} <span class="src"><a href="${esc(e.source_url)}" rel="noopener">${esc(host(e.source_url))}</a> &middot; ${esc(e.confidence)}</span></span></li>`).join('');
+  })();
+
+  /* ---------- ledger ---------- */
+  (function () {
+    const t = document.getElementById('tbl-ledger');
+    const fType = document.getElementById('f-type'), fCounted = document.getElementById('f-counted'), fConf = document.getElementById('f-conf'), fQ = document.getElementById('f-q'), cnt = document.getElementById('ledger-count');
+    const uniq = k => [...new Set(D.pledges.map(r => r[k]).filter(Boolean))].sort();
+    uniq('donor_type').forEach(v => fType.insertAdjacentHTML('beforeend', `<option>${esc(v)}</option>`));
+    const confBucket = c => /^Multiple/.test(c) ? 'Multiple sources' : /^Derived/.test(c) ? 'Derived' : /Unconfirmed|unverified|weak|unknown/i.test(c) ? 'Unconfirmed or weak' : 'Single source';
+    ['Multiple sources', 'Single source', 'Derived', 'Unconfirmed or weak'].forEach(v => fConf.insertAdjacentHTML('beforeend', `<option>${esc(v)}</option>`));
+    let sortKey = 'date_announced', sortAsc = true;
+    const cols = [
+      { k: 'date_announced', l: 'Date' }, { k: 'donor', l: 'Donor' }, { k: 'recipient_channel', l: 'Recipient / purpose' },
+      { k: 'amount_usd_m', l: 'USD m', num: true }, { k: 'type', l: 'Type' }, { k: 'earmark', l: 'Earmark' }, { k: 'counts_in_total', l: 'Counted' }, { k: 'confidence', l: 'Confidence' }, { k: 'source_url', l: 'Source' }
+    ];
+    function render() {
+      const q = fQ.value.trim().toLowerCase();
+      let rows = D.pledges.filter(r => (!fType.value || r.donor_type === fType.value) && (!fCounted.value || r.counts_in_total === fCounted.value) && (!fConf.value || confBucket(r.confidence) === fConf.value) && (!q || [r.donor, r.recipient_channel, r.notes, r.overlap_note, r.earmark, r.type, r.disbursement_evidence].join(' ').toLowerCase().includes(q)));
+      rows.sort((a, b) => { let va = a[sortKey], vb = b[sortKey]; if (sortKey === 'amount_usd_m') { va = va == null ? -1 : va; vb = vb == null ? -1 : vb; } if (va < vb) return sortAsc ? -1 : 1; if (va > vb) return sortAsc ? 1 : -1; return 0; });
+      let h = '<thead><tr>' + cols.map(c => `<th data-k="${c.k}" class="${c.num ? 'num ' : ''}${sortKey === c.k ? 'sorted' + (sortAsc ? ' asc' : '') : ''}">${esc(c.l)}</th>`).join('') + '</tr></thead><tbody>';
+      rows.forEach(r => {
+        const extra = [r.overlap_note && 'Overlap: ' + r.overlap_note, r.disbursement_evidence && 'Disbursement: ' + r.disbursement_evidence + (r.evidence_date ? ' (' + r.evidence_date + ')' : ''), r.usd_basis && r.usd_basis !== 'source' && 'USD basis: ' + r.usd_basis, r.amount_original && r.currency && r.currency !== 'USD' && r.currency !== 'in-kind' && 'Original: ' + r.currency + ' ' + r.amount_original + 'm', r.notes].filter(Boolean);
+        h += `<tr><td class="num">${esc(r.date_announced)}</td><td>${esc(r.donor)}<span class="sec">${esc(r.donor_type)}</span></td><td>${esc(r.recipient_channel)}${extra.length ? `<details><summary>Notes</summary>${extra.map(esc).join('<br>')}</details>` : ''}</td><td class="num">${r.amount_usd_m != null ? fmtM(r.amount_usd_m) : '<span class="pill">' + (r.currency === 'in-kind' ? 'in-kind' : 'n/a') + '</span>'}</td><td>${esc(r.type)}</td><td>${esc(r.earmark)}</td><td>${r.counts_in_total === 'Y' ? '<span class="pill y">counted</span>' : '<span class="pill">no</span>'}</td><td>${esc(r.confidence)}</td><td><a href="${esc(r.source_url)}" rel="noopener">${esc(host(r.source_url))}</a><span class="sec">${esc(r.source_date)}</span></td></tr>`;
+      });
+      t.innerHTML = h + '</tbody>';
+      cnt.textContent = rows.length + ' of ' + D.pledges.length + ' rows; counted sum ' + fmtM(rows.filter(r => r.counts_in_total === 'Y' && r.amount_usd_m).reduce((s, r) => s + r.amount_usd_m, 0));
+      t.querySelectorAll('th').forEach(th => th.addEventListener('click', () => { const k = th.dataset.k; if (sortKey === k) sortAsc = !sortAsc; else { sortKey = k; sortAsc = k !== 'amount_usd_m'; } render(); }));
+    }
+    [fType, fCounted, fConf].forEach(e => e.addEventListener('change', render));
+    fQ.addEventListener('input', render);
+    render();
+  })();
+})();
+</script>
+</body>
+</html>
